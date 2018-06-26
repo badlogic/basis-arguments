@@ -1,4 +1,4 @@
-#basis-arguments
+# basis-arguments
 Basis-arguments is a command line argument parsing and help text library for Java and other JVM languages.
 
 ## Motivation
