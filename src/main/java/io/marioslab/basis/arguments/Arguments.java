@@ -1,7 +1,8 @@
 
 package io.marioslab.basis.arguments;
 
-import java.io.Writer;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,7 +111,60 @@ public class Arguments {
 
 	/** Outputs the help text of each argument in the order they were added with {@link #addArgument(Argument)} and
 	 * {@link #addArgument(ArgumentWithValue, ArgumentWithValueMatchedCallback)}. Uses the values returned by
-	 * {@link Argument#getHelp()} and ArgumentWithValue#. **/
-	public void printHelp (Writer writer) {
+	 * {@link Argument#getHelpText()} and {@link ArgumentWithValue#getValueHelpText()}. Throws an {@link IOException} if writing to
+	 * the writer failed. **/
+	public void printHelp (PrintStream stream) {
+		for (Argument arg : arguments) {
+			String shortForm = arg.getShortForm();
+			String longForm = arg.getLongForm();
+			if (arg instanceof ArgumentWithValue) {
+				shortForm += " " + ((ArgumentWithValue<?>)arg).getValueHelpText();
+				longForm += " " + ((ArgumentWithValue<?>)arg).getValueHelpText();
+			}
+			shortForm = rightPad(shortForm, 18);
+			longForm = rightPad(longForm, 18);
+
+			boolean helpTextOnOwnLine = shortForm.length() > 18 || longForm.length() > 18;
+			if (helpTextOnOwnLine) {
+				stream.print(shortForm);
+				stream.print("\n");
+				stream.print(longForm);
+				stream.print("\n");
+				for (String line : arg.getHelpText().split("\n")) {
+					stream.print("                  ");
+					stream.print(line);
+					stream.print("\n");
+				}
+			} else {
+				String[] lines = arg.getHelpText().split("\n");
+				stream.print(shortForm);
+				stream.print(lines[0]);
+				stream.print("\n");
+				stream.print(longForm);
+				if (lines.length > 1) {
+					stream.print(lines[1]);
+					stream.print("\n");
+					for (int i = 2, n = lines.length; i < n; i++) {
+						stream.print("                  ");
+						stream.print(lines[i]);
+						stream.print("\n");
+					}
+				} else {
+					stream.print("\n");
+				}
+			}
+			stream.print("\n");
+		}
+	}
+
+	/** Pads the string with spaces to the right up until the minimum length. **/
+	private String rightPad (String value, int minLength) {
+		if (value.length() > minLength) return value;
+		StringBuilder builder = new StringBuilder();
+		builder.append(value);
+		for (int i = 0, n = minLength - value.length(); i < n; i++) {
+			builder.append(" ");
+		}
+		return builder.toString();
 	}
 }

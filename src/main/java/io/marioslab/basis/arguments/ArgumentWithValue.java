@@ -1,19 +1,19 @@
 
 package io.marioslab.basis.arguments;
 
-import java.io.Writer;
+import java.io.PrintStream;
 
 /** An {@link Argument} that expects a value, e.g. "--path path/to/somewhere". In addition to the properties of an Argument,
  * instances of this class must also provide a name for the value to be used when this argument is displayed by
- * {@link Arguments#printHelp(Writer)}. An implementation of this class must provide a {@link #parseValue(String)} implementation
+ * {@link Arguments#printHelp(PrintStream)}. An implementation of this class must provide a {@link #parseValue(String)} implementation
  * that can parse the expected value and return it. */
 public abstract class ArgumentWithValue<T> extends Argument {
 	private final String valueHelpName;
 
 	/** @param shortForm the short form of the argument, e.g. "-v".
 	 * @param longForm the long form of the argument, e.g. "--verbose".
-	 * @param help the help text to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this argument.
-	 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this
+	 * @param help the help text to be displayed by {@link Arguments#printHelp(PrintStream)} for this argument.
+	 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(PrintStream)} for this
 	 *           argument.
 	 * @param isOptional whether this argument is optional. */
 	public ArgumentWithValue (String shortForm, String longForm, String help, String valueHelpName, boolean isOptional) {
@@ -21,9 +21,9 @@ public abstract class ArgumentWithValue<T> extends Argument {
 		this.valueHelpName = valueHelpName;
 	}
 
-	/** Return the name for the expected value to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this
+	/** Return the name for the expected value to be displayed by {@link Arguments#printHelp(PrintStream)} for this
 	 * argument. **/
-	public String getValueHelpName () {
+	public String getValueHelpText () {
 		return valueHelpName;
 	}
 
@@ -56,8 +56,8 @@ public abstract class ArgumentWithValue<T> extends Argument {
 	public static class BooleanArgument extends ArgumentWithValue<Boolean> {
 		/** @param shortForm the short form of the argument, e.g. "-v".
 		 * @param longForm the long form of the argument, e.g. "--verbose".
-		 * @param help the help text to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this argument.
-		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(java.io.Writer)} for
+		 * @param help the help text to be displayed by {@link Arguments#printHelp(PrintStream)} for this argument.
+		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(PrintStream)} for
 		 *           this argument.
 		 * @param isOptional whether this argument is optional. */
 		public BooleanArgument (String shortForm, String longForm, String help, String valueHelpName, boolean isOptional) {
@@ -79,8 +79,8 @@ public abstract class ArgumentWithValue<T> extends Argument {
 	public static class IntegerArgument extends ArgumentWithValue<Integer> {
 		/** @param shortForm the short form of the argument, e.g. "-v".
 		 * @param longForm the long form of the argument, e.g. "--verbose".
-		 * @param help the help text to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this argument.
-		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(java.io.Writer)} for
+		 * @param help the help text to be displayed by {@link Arguments#printHelp(PrintStream)} for this argument.
+		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(PrintStream)} for
 		 *           this argument.
 		 * @param isOptional whether this argument is optional. */
 		public IntegerArgument (String shortForm, String longForm, String help, String valueHelpName, boolean isOptional) {
@@ -101,8 +101,8 @@ public abstract class ArgumentWithValue<T> extends Argument {
 	public static class FloatArgument extends ArgumentWithValue<Float> {
 		/** @param shortForm the short form of the argument, e.g. "-v".
 		 * @param longForm the long form of the argument, e.g. "--verbose".
-		 * @param help the help text to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this argument.
-		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(java.io.Writer)} for
+		 * @param help the help text to be displayed by {@link Arguments#printHelp(PrintStream)} for this argument.
+		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(PrintStream)} for
 		 *           this argument.
 		 * @param isOptional whether this argument is optional. */
 		public FloatArgument (String shortForm, String longForm, String help, String valueHelpName, boolean isOptional) {
@@ -124,8 +124,8 @@ public abstract class ArgumentWithValue<T> extends Argument {
 	public static class StringArgument extends ArgumentWithValue<String> {
 		/** @param shortForm the short form of the argument, e.g. "-v".
 		 * @param longForm the long form of the argument, e.g. "--verbose".
-		 * @param help the help text to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this argument.
-		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(java.io.Writer)} for
+		 * @param help the help text to be displayed by {@link Arguments#printHelp(PrintStream)} for this argument.
+		 * @param valueHelpName the name for the expected value to be displayed by {@link Arguments#printHelp(PrintStream)} for
 		 *           this argument.
 		 * @param isOptional whether this argument is optional. */
 		public StringArgument (String shortForm, String longForm, String help, String valueHelpName, boolean isOptional) {

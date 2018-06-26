@@ -1,10 +1,12 @@
 
 package io.marioslab.basis.arguments;
 
+import java.io.PrintStream;
+
 /**
  * <p>
  * Defines an argument that can be parsed or for which help can be displayed by {@link Arguments#parse(String[])} and
- * {@link Arguments#printHelp(java.io.Writer)}.
+ * {@link Arguments#printHelp(PrintStream)}.
  * </p>
  *
  * <p>
@@ -13,8 +15,8 @@ package io.marioslab.basis.arguments;
  * </p>
  *
  * <p>
- * The long and short form along with the help text returned by {@link #getHelp()} are used by
- * {@link Arguments#printHelp(java.io.Writer)} to display the argument's help information.
+ * The long and short form along with the help text returned by {@link #getHelpText()} are used by
+ * {@link Arguments#printHelp(PrintStream)} to display the argument's help information.
  * </p>
  *
  * <p>
@@ -34,7 +36,7 @@ public class Argument {
 
 	/** @param shortForm the short form of the argument, e.g. "-v".
 	 * @param longForm the long form of the argument, e.g. "--verbose".
-	 * @param help the help text to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this argument.
+	 * @param help the help text to be displayed by {@link Arguments#printHelp(PrintStream)} for this argument.
 	 * @param isOptional whether this argument is optional. */
 	public Argument (String shortForm, String longForm, String help, boolean isOptional) {
 		super();
@@ -55,7 +57,7 @@ public class Argument {
 	}
 
 	/** Returns the help string to be displayed. **/
-	String getHelp () {
+	String getHelpText () {
 		return help;
 	}
 

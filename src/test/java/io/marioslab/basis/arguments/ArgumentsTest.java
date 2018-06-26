@@ -138,4 +138,18 @@ public class ArgumentsTest {
 		assertFalse(matched[1]);
 		assertFalse(matched[2]);
 	}
+
+	@Test
+	public void testPrintHelp () {
+		Arguments args = new Arguments();
+		args.addArgument(new Argument("-v", "--verbose", "Log things verbosely. Optional.", true), (a) -> {
+		});
+		args.addArgument(new Argument("-d", "--dispose-all-the-things",
+			"This is a help text that is way\nto long. So we stretch it out to multiple\nlines. Hopefully this is readable.", true), (a) -> {
+			});
+		args.addArgument(new StringArgument("-i", "--input",
+			"This is a help text that is way\nto long. So we stretch it out to multiple\nlines. Hopefully this is readable.", "<path>", true), (a, val) -> {
+			});
+		args.printHelp(System.out);
+	}
 }
