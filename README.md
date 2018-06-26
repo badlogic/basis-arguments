@@ -34,7 +34,7 @@ The resulting `.jar` file will be located in the `target/` folder.
 ## Basic Usage
 Assume you have a class `ConfigBuilder` which allows you to build the configuration for your app with chained method invocations. You can then use basis-arguments to parse command line arguments and invoke the builder.
 
-```
+```java
 public static void main (String[] argv) {
    Arguments args = new Arguments();
 
