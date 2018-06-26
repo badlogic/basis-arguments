@@ -60,7 +60,7 @@ public static void main (String[] argv) {
 }
 ```
 
-First, we create a new `Arguments` instance to which we add the arguments the program can handle. Each argument specifies its short and long form (e.g. '-v' and '--verbose'), a help text to be displayed when the help text is printed out, and whether the argument is optional or not. For arguments that also expect a value, like `StringArgument` or `IntegerArgument, we additionally specify the help text to be displayed for that value, e.g. `<port>`.
+First, we create a new `Arguments` instance to which we add the arguments the program can handle. Each argument specifies its short and long form (e.g. '-v' and '--verbose'), a help text to be displayed when the help text is printed out, and whether the argument is optional or not. For arguments that also expect a value, like `StringArgument` or `IntegerArgument`, we additionally specify the help text to be displayed for that value, e.g. `<port>`.
 
 After constructing an argument, we can add it to the `Arguments` instance, along with a callback that will be called when that argument is matched. For arguments that don't expect a value, only the argument is passed along. For arguments that expect a value, the argument plus the value as its Java type are passed to the callback.
 
