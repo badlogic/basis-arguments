@@ -3,42 +3,95 @@ package io.marioslab.basis.arguments;
 
 /**
  * <p>
- * An argument that can be parsed by an ArgumentParser. An argument consists of a short form ("-v"), a long form ("--verbose") and
- * a help string ("Turns on verbose logging."). The prefixes "-" and "--" are handled by the parser, the argument itself only
- * needs to return the actual short and long forms.
+ * Defines an argument that can be parsed or for which help can be displayed by {@link Arguments#parse(String[])} and
+ * {@link Arguments#printHelp(java.io.Writer)}.
  * </p>
  *
  * <p>
- * An argument may be optional, indicated by returning <code>false</code> from {@link #isOptional()}.
- * <p>
+ * An argument has a short and long form, e.g. "-v" and "-verbose" that {@link Arguments#parse(String[])} matches against. When an
+ * argument is matched, its {@link ArgumentMatchedCallback} is called.
+ * </p>
  *
  * <p>
- * An argument may expect a value, indicated by returning <code>true</code> from {@link #expectsValue()}. If it does expect a
- * value, then the {@link #parseValue()} method will be called by the parser, providing the next argument string in the argument
- * list. The argument returns the parsed value when {@link #getValue()} is called. **/
-public interface Argument<T> {
-	/** The short form of the argument, e.g. "v". The parser will match this argument if it encounters "-v". **/
-	String getShortForm ();
+ * The long and short form along with the help text returned by {@link #getHelp()} are used by
+ * {@link Arguments#printHelp(java.io.Writer)} to display the argument's help information.
+ * </p>
+ *
+ * <p>
+ * An argument may be optional or non-optional. If it is non-optional and not matched by {@link Arguments#parse(String[])}, then
+ * an {@link ArgumentException} will be raised.
+ * </p>
+ *
+ * <p>
+ * For arguments that expect a value, see {@link ArgumentWithValue} and its inner classes for concrete implementations.
+ * </p>
+ */
+public class Argument {
+	private final String shortForm;
+	private final String longForm;
+	private final String help;
+	private final boolean isOptional;
 
-	/** The long form of the argument, e.g. "verbose". The parser will match this argument if it encounters "--verbose". **/
-	String getLongForm ();
+	/** @param shortForm the short form of the argument, e.g. "-v".
+	 * @param longForm the long form of the argument, e.g. "--verbose".
+	 * @param help the help text to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this argument.
+	 * @param isOptional whether this argument is optional. */
+	public Argument (String shortForm, String longForm, String help, boolean isOptional) {
+		super();
+		this.shortForm = shortForm;
+		this.longForm = longForm;
+		this.help = help;
+		this.isOptional = isOptional;
+	}
 
-	/** The help string to be displayed when the parser is instructed to log the help strings of all arguments. **/
-	String getHelp ();
+	/** Returns the short form of the argument, e.g. "v" would match "-v". **/
+	String getShortForm () {
+		return shortForm;
+	}
 
-	/** Whether the argument is optional. **/
-	boolean isOptional ();
+	/** Returns the long form of the argument, e.g. "verbose" would match "--verbose". **/
+	String getLongForm () {
+		return longForm;
+	}
 
-	/** Whether the argument expects a value. **/
-	boolean expectsValue ();
+	/** Returns the help string to be displayed. **/
+	String getHelp () {
+		return help;
+	}
 
-	/** Parses the value for this argument. The result must be returned by a call to {@link #getValue()}. This method will be
-	 * called by the parser with a <code>null</code> argument for arguments that do not expect a value. **/
-	void parseValue (String value);
+	/** Whether the argument is optional. {@link Arguments#parse(String[])} will raise an {@link ArgumentException} if the
+	 * argument is not optional and is never matched. **/
+	boolean isOptional () {
+		return isOptional;
+	}
 
-	/** Returns the parsed value or null if this argument does not have a value. **/
-	T getValue ();
+	@Override
+	public int hashCode () {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((help == null) ? 0 : help.hashCode());
+		result = prime * result + (isOptional ? 1231 : 1237);
+		result = prime * result + ((longForm == null) ? 0 : longForm.hashCode());
+		result = prime * result + ((shortForm == null) ? 0 : shortForm.hashCode());
+		return result;
+	}
 
-	/** Returns whether the value was matched during parsing. **/
-	boolean wasMatched ();
+	@Override
+	public boolean equals (Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		Argument other = (Argument)obj;
+		if (help == null) {
+			if (other.help != null) return false;
+		} else if (!help.equals(other.help)) return false;
+		if (isOptional != other.isOptional) return false;
+		if (longForm == null) {
+			if (other.longForm != null) return false;
+		} else if (!longForm.equals(other.longForm)) return false;
+		if (shortForm == null) {
+			if (other.shortForm != null) return false;
+		} else if (!shortForm.equals(other.shortForm)) return false;
+		return true;
+	}
 }
