@@ -28,36 +28,41 @@ public class Arguments {
 	private final Map<Argument, ArgumentMatchedCallback> argumentCallbacks = new HashMap<>();
 	@SuppressWarnings("rawtypes") private final Map<ArgumentWithValue, ArgumentWithValueMatchedCallback> argumentWithValueCallbacks = new HashMap<>();
 
-	/** Adds a new Argument. In case an argument with the short or long form was already added to the parser, an
-	 * {@link ArgumentException} is thrown. Returns the added argument. **/
+	/** Adds a new {@link Argument}. The {@link ArgumentMatchedCallback} will be called when the argument is matched by a
+	 * {@link #parse(String[])} invocation. **/
 	public Arguments addArgument (Argument argument, ArgumentMatchedCallback callback) {
 		for (Argument other : arguments) {
 			if (other.getShortForm().equals(argument.getShortForm()))
-				throw new ArgumentException("Argument with short form " + argument.getShortForm() + " already added to parser.");
+				throw new ArgumentException("Argument with short form " + argument.getShortForm() + " already added.");
 			if (other.getLongForm().equals(argument.getLongForm()))
-				throw new ArgumentException("Argument with long form " + argument.getLongForm() + " already added to parser.");
+				throw new ArgumentException("Argument with long form " + argument.getLongForm() + " already added.");
 		}
 		arguments.add(argument);
 		argumentCallbacks.put(argument, callback);
 		return this;
 	}
 
-	/** Adds a new Argument. In case an argument with the short or long form was already added to the parser, an
-	 * {@link ArgumentException} is thrown. Returns the added argument. **/
+	/** Adds a new {@link ArgumentWithValue}. The {@link ArgumentWithValueMatchedCallback} will be called when the argument is
+	 * matched by a {@link #parse(String[])} invocation. **/
 	public <T> Arguments addArgument (ArgumentWithValue<T> argument, ArgumentWithValueMatchedCallback<T> callback) {
 		for (Argument other : arguments) {
 			if (other.getShortForm().equals(argument.getShortForm()))
-				throw new ArgumentException("Argument with short form " + argument.getShortForm() + " already added to parser.");
+				throw new ArgumentException("Argument with short form " + argument.getShortForm() + " already added.");
 			if (other.getLongForm().equals(argument.getLongForm()))
-				throw new ArgumentException("Argument with long form " + argument.getLongForm() + " already added to parser.");
+				throw new ArgumentException("Argument with long form " + argument.getLongForm() + " already added.");
 		}
 		arguments.add(argument);
 		argumentWithValueCallbacks.put(argument, callback);
 		return this;
 	}
 
-	/** Parses the given arguments by matching them with the short or long form of {@link Argument} instances added to this parser
-	 * via {@link #addArgument(Argument)}. */
+	/** Parses the given arguments by matching them with the short or long form of {@link Argument} and {@link ArgumentWithValue}
+	 * instances added via {@link #addArgument(Argument)} and
+	 * {@link #addArgument(ArgumentWithValue, ArgumentWithValueMatchedCallback)}. In case a non-optional argument is not matched,
+	 * an {@link ArgumentException} is thrown with the message describing which non-optional arguments have not been found. In case
+	 * the value of an argument could not be cased, an {@link ArgumentException} is thrown describing why the value could not be
+	 * parsed. In case a value for an argument with expected value is not found, an {@link ArgumentException} is thrown, with its
+	 * message describing for which argument the value could not be found. */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void parse (String[] args) {
 		Set<Argument> nonOptional = new HashSet<>();
@@ -103,7 +108,9 @@ public class Arguments {
 		}
 	}
 
-	/** Outputs the help text of each argument in the order they were added with {@link #addArgument(Argument)}. **/
+	/** Outputs the help text of each argument in the order they were added with {@link #addArgument(Argument)} and
+	 * {@link #addArgument(ArgumentWithValue, ArgumentWithValueMatchedCallback)}. Uses the values returned by
+	 * {@link Argument#getHelp()} and ArgumentWithValue#. **/
 	public void printHelp (Writer writer) {
 	}
 }

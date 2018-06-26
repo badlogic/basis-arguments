@@ -21,6 +21,12 @@ public abstract class ArgumentWithValue<T> extends Argument {
 		this.valueHelpName = valueHelpName;
 	}
 
+	/** Return the name for the expected value to be displayed by {@link Arguments#printHelp(java.io.Writer)} for this
+	 * argument. **/
+	public String getValueHelpName () {
+		return valueHelpName;
+	}
+
 	/** Parses and returns the value string into a Java type. Raises a {@link ArgumentException} if the value could not be
 	 * parsed. */
 	public abstract T parseValue (String valueString);
