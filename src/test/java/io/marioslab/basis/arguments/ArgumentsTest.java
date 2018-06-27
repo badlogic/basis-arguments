@@ -5,6 +5,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+
 import org.junit.Test;
 
 import io.marioslab.basis.arguments.ArgumentWithValue.BooleanArgument;
@@ -140,7 +144,7 @@ public class ArgumentsTest {
 	}
 
 	@Test
-	public void testPrintHelp () {
+	public void testPrintHelp () throws UnsupportedEncodingException {
 		Arguments args = new Arguments();
 		args.addArgument(new Argument(new String[] {"-v", "--verbose"}, "Log things verbosely. Optional.", true), (a) -> {
 		});
@@ -151,5 +155,11 @@ public class ArgumentsTest {
 			"This is a help text that is way\nto long. So we stretch it out to multiple\nlines. Hopefully this is readable.", "<path>", true), (a, val) -> {
 			});
 		args.printHelp(System.out);
+		assertEquals(
+			"-v                Log things verbosely. Optional.\n" + "--verbose         \n" + "\n" + "-d                \n" + "--dispose-all-the-things\n"
+				+ "                  This is a help text that is way\n" + "                  to long. So we stretch it out to multiple\n"
+				+ "                  lines. Hopefully this is readable.\n" + "\n" + "-i <path>         This is a help text that is way\n"
+				+ "--input <path>    to long. So we stretch it out to multiple\n" + "                  lines. Hopefully this is readable.\n" + "\n" + "",
+			args.printHelp());
 	}
 }

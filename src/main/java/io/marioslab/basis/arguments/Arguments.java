@@ -1,6 +1,7 @@
 
 package io.marioslab.basis.arguments;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -118,8 +119,7 @@ public class Arguments {
 
 	/** Outputs the help text of each argument in the order they were added with {@link #addArgument(Argument)} and
 	 * {@link #addArgument(ArgumentWithValue, ArgumentWithValueMatchedCallback)}. Uses the values returned by
-	 * {@link Argument#getHelpText()} and {@link ArgumentWithValue#getValueHelpText()}. Throws an {@link IOException} if writing to
-	 * the writer failed. **/
+	 * {@link Argument#getHelpText()} and {@link ArgumentWithValue#getValueHelpText()}. **/
 	public void printHelp (PrintStream stream) {
 		for (BaseArgument arg : arguments) {
 			String[] formTexts = new String[arg.getForms().length];
@@ -148,12 +148,23 @@ public class Arguments {
 				String[] lines = arg.getHelpText().split("\n");
 				for (int i = 0, n = Math.max(lines.length, forms.length); i < n; i++) {
 					if (i < forms.length) stream.print(formTexts[i]);
+					if (i >= forms.length && i < lines.length) stream.print("                  ");
 					if (i < lines.length) stream.print(lines[i]);
 					stream.print("\n");
 				}
 			}
 			stream.print("\n");
 		}
+	}
+
+	/** Returns the help text of each argument in the order they were added with {@link #addArgument(Argument)} and
+	 * {@link #addArgument(ArgumentWithValue, ArgumentWithValueMatchedCallback)} as a String. Uses the values returned by
+	 * {@link Argument#getHelpText()} and {@link ArgumentWithValue#getValueHelpText()}. **/
+	public String printHelp () {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(bytes);
+		printHelp(out);
+		return new String(bytes.toByteArray());
 	}
 
 	/** Pads the string with spaces to the right up until the minimum length. **/
