@@ -39,10 +39,10 @@ public static void main (String[] argv) {
    Arguments args = new Arguments();
 
    // Add a simple, optional argument that doesn't expect a value.
-   args.addArgument(new Argument("-v", "--verbose", "Display verbose log messages.", true), (argument) -> { configBuilder.verboseLogging(true); });
+   args.addArgument(new Argument("-v", "Display verbose log messages.", true), (argument) -> { configBuilder.verboseLogging(true); });
 
    // Add an argument that expects a string value.
-   args.addArgument(new StringArgument("-s", "--serve-static-files", "Serve static files from the given directory, non-optional.", "<directory>", false), (argument, value) -> { configBuilder.serveStaticFiles(new File(value)); });
+   args.addArgument(new StringArgument(new String["-s", "--serve-static-files"], "Serve static files from the given directory, non-optional.", "<directory>", false), (argument, value) -> { configBuilder.serveStaticFiles(new File(value)); });
 
    // Add an argument that expects an integer value.
    args.addArgument(new IntegerArgument("-p", "--port", "The port to serve the files from, non-optional.", "<port>", false), (argument, value) -> { configBuilder.port(value); });
@@ -60,7 +60,7 @@ public static void main (String[] argv) {
 }
 ```
 
-First, we create a new `Arguments` instance to which we add the arguments the program can handle. Each argument specifies its short and long form (e.g. '-v' and '--verbose'), a help text to be displayed when the help text is printed out, and whether the argument is optional or not. For arguments that also expect a value, like `StringArgument` or `IntegerArgument`, we additionally specify the help text to be displayed for that value, e.g. `<port>`.
+First, we create a new `Arguments` instance to which we add the arguments the program can handle. Each argument specifies one or more forms (e.g. '-v' and '--verbose'), a help text to be displayed when the help text is printed out, and whether the argument is optional or not. For arguments that also expect a value, like `StringArgument` or `IntegerArgument`, we additionally specify the help text to be displayed for that value, e.g. `<port>`.
 
 After constructing an argument, we can add it to the `Arguments` instance, along with a callback that will be called when that argument is matched. For arguments that don't expect a value, only the argument is passed along. For arguments that expect a value, the argument plus the value as its Java type are passed to the callback.
 
@@ -76,4 +76,4 @@ For arguments that expect a value, basis-arguments provides a handful of built-i
 See [LICENSE](./LICENSE)
 
 ## Contributing
-Simply send a PR and grant written, irrevocable permission in your PR description to publish your code under this repositories [LICENSE](./LICENSE).
+Simply send a PR and grant written, irrevocable permission in your PR description to publish your code under this repository's [LICENSE](./LICENSE).

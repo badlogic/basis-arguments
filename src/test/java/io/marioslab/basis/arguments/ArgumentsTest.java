@@ -27,8 +27,8 @@ public class ArgumentsTest {
 	@Test
 	public void testDuplicateArgumentName () {
 		try {
-			new Arguments().addArgument(new Argument("-v", "--verbose", "help text", false), (a) -> {
-			}).addArgument(new Argument("-v", "--verbose", "help text", false), (a) -> {
+			new Arguments().addArgument(new Argument(new String[] {"-v", "--verbose"}, "help text", false), (a) -> {
+			}).addArgument(new Argument(new String[] {"-v", "--verbose"}, "help text", false), (a) -> {
 			});
 			assertTrue("Expect an ArgumentException to be thrown.", false);
 		} catch (ArgumentException e) {
@@ -40,10 +40,10 @@ public class ArgumentsTest {
 	public void testArgumentWithoutValue () {
 		Arguments args = new Arguments();
 		boolean[] matched = new boolean[2];
-		args.addArgument(new Argument("-v", "--verbose", "Log verbosely.", false), (arg) -> {
+		args.addArgument(new Argument(new String[] {"-v", "--verbose"}, "Log verbosely.", false), (arg) -> {
 			matched[0] = true;
 		});
-		args.addArgument(new Argument("-w", "--watch", "Watch the file system for changes.", false), (arg) -> {
+		args.addArgument(new Argument(new String[] {"-w", "--watch"}, "Watch the file system for changes.", false), (arg) -> {
 			matched[1] = true;
 		});
 
@@ -58,19 +58,19 @@ public class ArgumentsTest {
 		Arguments args = new Arguments();
 		boolean[] matched = new boolean[4];
 
-		args.addArgument(new BooleanArgument("-a", "--aaa", "A.", "<value>", false), (arg, value) -> {
+		args.addArgument(new BooleanArgument(new String[] {"-a", "--aaa"}, "A.", "<value>", false), (arg, value) -> {
 			assertEquals(true, value);
 			matched[0] = true;
 		});
-		args.addArgument(new IntegerArgument("-b", "--bbb", "B.", "<value>", false), (arg, value) -> {
+		args.addArgument(new IntegerArgument(new String[] {"-b", "--bbb"}, "B.", "<value>", false), (arg, value) -> {
 			assertEquals((Integer)1234, value);
 			matched[1] = true;
 		});
-		args.addArgument(new FloatArgument("-c", "--ccc", "C.", "<value>", false), (arg, value) -> {
+		args.addArgument(new FloatArgument(new String[] {"-c", "--ccc"}, "C.", "<value>", false), (arg, value) -> {
 			assertEquals((Float)123.4f, value);
 			matched[2] = true;
 		});
-		args.addArgument(new StringArgument("-d", "--ddd", "D.", "<value>", false), (arg, value) -> {
+		args.addArgument(new StringArgument(new String[] {"-d", "--ddd"}, "D.", "<value>", false), (arg, value) -> {
 			assertEquals("This is a test", value);
 			matched[3] = true;
 		});
@@ -88,11 +88,11 @@ public class ArgumentsTest {
 		Arguments args = new Arguments();
 		boolean[] matched = new boolean[2];
 
-		args.addArgument(new BooleanArgument("-a", "--aaa", "A.", "<value>", false), (arg, value) -> {
+		args.addArgument(new BooleanArgument(new String[] {"-a", "--aaa"}, "A.", "<value>", false), (arg, value) -> {
 			assertEquals(true, value);
 			matched[0] = true;
 		});
-		args.addArgument(new IntegerArgument("-b", "--bbb", "B.", "<value>", false), (arg, value) -> {
+		args.addArgument(new IntegerArgument(new String[] {"-b", "--bbb"}, "B.", "<value>", false), (arg, value) -> {
 			assertEquals((Integer)1234, value);
 			matched[1] = true;
 		});
@@ -113,15 +113,15 @@ public class ArgumentsTest {
 		Arguments args = new Arguments();
 		boolean[] matched = new boolean[3];
 
-		args.addArgument(new BooleanArgument("-a", "--aaa", "A.", "<value>", true), (arg, value) -> {
+		args.addArgument(new BooleanArgument(new String[] {"-a", "--aaa"}, "A.", "<value>", true), (arg, value) -> {
 			assertEquals(true, value);
 			matched[0] = true;
 		});
-		args.addArgument(new IntegerArgument("-b", "--bbb", "B.", "<value>", false), (arg, value) -> {
+		args.addArgument(new IntegerArgument(new String[] {"-b", "--bbb"}, "B.", "<value>", false), (arg, value) -> {
 			assertEquals((Integer)1234, value);
 			matched[1] = true;
 		});
-		args.addArgument(new FloatArgument("-c", "--ccc", "C.", "<value>", false), (arg, value) -> {
+		args.addArgument(new FloatArgument(new String[] {"-c", "--ccc"}, "C.", "<value>", false), (arg, value) -> {
 			assertEquals((Float)123.4f, value);
 			matched[2] = true;
 		});
@@ -142,12 +142,12 @@ public class ArgumentsTest {
 	@Test
 	public void testPrintHelp () {
 		Arguments args = new Arguments();
-		args.addArgument(new Argument("-v", "--verbose", "Log things verbosely. Optional.", true), (a) -> {
+		args.addArgument(new Argument(new String[] {"-v", "--verbose"}, "Log things verbosely. Optional.", true), (a) -> {
 		});
-		args.addArgument(new Argument("-d", "--dispose-all-the-things",
+		args.addArgument(new Argument(new String[] {"-d", "--dispose-all-the-things"},
 			"This is a help text that is way\nto long. So we stretch it out to multiple\nlines. Hopefully this is readable.", true), (a) -> {
 			});
-		args.addArgument(new StringArgument("-i", "--input",
+		args.addArgument(new StringArgument(new String[] {"-i", "--input"},
 			"This is a help text that is way\nto long. So we stretch it out to multiple\nlines. Hopefully this is readable.", "<path>", true), (a, val) -> {
 			});
 		args.printHelp(System.out);
