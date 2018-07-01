@@ -2,33 +2,72 @@
 package io.marioslab.basis.arguments;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /** Takes {@link Argument} and {@link ArgumentWithValue} instances and matches them with a list of command line argument strings
  * or prints a help text for all arguments. **/
 public class Arguments {
-	/** Registered for an {@link Argument} via {@link Arguments#addArgument(Argument)}, called when the argument matches during a
-	 * call to {@link Arguments#parse(String[])}. **/
-	public interface ArgumentMatchedCallback {
-		public void matched (Argument argument);
+	/** A parsed argument with and optional value. */
+	public class ParsedArgument {
+		private final BaseArgument argument;
+		private final Object value;
+
+		<T> ParsedArgument (ArgumentWithValue<T> argument, T value) {
+			this.argument = argument;
+			this.value = value;
+		}
+
+		ParsedArgument (Argument argument) {
+			this.argument = argument;
+			this.value = null;
+		}
+
+		public boolean is (BaseArgument argument) {
+			return argument == this.argument;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <T> T getValue (ArgumentWithValue<T> argument) {
+			if (argument != this.argument) throw new ArgumentException(
+				"The provided argument " + argument.getForms()[0] + " does not match the parsed argument " + argument.getForms()[0] + ".");
+			return (T)value;
+		}
 	}
 
-	/** Registered for an {@link Argument} via {@link Arguments#addArgument(Argument)}, called when the argument matches during a
-	 * call to {@link Arguments#parse(String[])}. **/
-	public interface ArgumentWithValueMatchedCallback<T> {
-		public void matched (ArgumentWithValue<T> argument, T value);
+	/** Parsed arguments as returned by {@link Arguments#parse(String[])}. **/
+	public class ParsedArguments {
+		private final List<ParsedArgument> parsedArguments;
+
+		ParsedArguments (List<ParsedArgument> parsedArguments) {
+			this.parsedArguments = parsedArguments;
+		}
+
+		public List<ParsedArgument> getParsedArguments () {
+			return parsedArguments;
+		}
+
+		public <T> T getValue (ArgumentWithValue<T> argument) {
+			for (ParsedArgument parsedArg : parsedArguments) {
+				if (parsedArg.is(argument)) {
+					return parsedArg.getValue(argument);
+				}
+			}
+			throw new ArgumentException("The argument " + argument.getForms()[0]);
+		}
+
+		public boolean has (BaseArgument argument) {
+			for (ParsedArgument parsedArg : parsedArguments) {
+				if (parsedArg.is(argument)) return true;
+			}
+			return false;
+		}
 	}
 
 	private final List<BaseArgument> arguments = new ArrayList<>();
-	private final Map<BaseArgument, ArgumentMatchedCallback> argumentCallbacks = new HashMap<>();
-	@SuppressWarnings("rawtypes") private final Map<ArgumentWithValue, ArgumentWithValueMatchedCallback> argumentWithValueCallbacks = new HashMap<>();
 
 	private void checkDuplicateForm (BaseArgument argument) {
 		for (BaseArgument other : arguments) {
@@ -47,38 +86,34 @@ public class Arguments {
 		return false;
 	}
 
-	/** Adds a new {@link Argument}. The {@link ArgumentMatchedCallback} will be called when the argument is matched by a
-	 * {@link #parse(String[])} invocation. **/
-	public Arguments addArgument (Argument argument, ArgumentMatchedCallback callback) {
+	/** Adds a new {@link Argument}. **/
+	public Argument addArgument (Argument argument) {
 		checkDuplicateForm(argument);
 		arguments.add(argument);
-		argumentCallbacks.put(argument, callback);
-		return this;
+		return argument;
 	}
 
-	/** Adds a new {@link ArgumentWithValue}. The {@link ArgumentWithValueMatchedCallback} will be called when the argument is
-	 * matched by a {@link #parse(String[])} invocation. **/
-	public <T> Arguments addArgument (ArgumentWithValue<T> argument, ArgumentWithValueMatchedCallback<T> callback) {
+	/** Adds a new {@link ArgumentWithValue}. **/
+	public <T extends ArgumentWithValue<V>, V> T addArgument (T argument) {
 		checkDuplicateForm(argument);
 		arguments.add(argument);
-		argumentWithValueCallbacks.put(argument, callback);
-		return this;
+		return argument;
 	}
 
 	/** Parses the given arguments by matching them with the short or long form of {@link Argument} and {@link ArgumentWithValue}
-	 * instances added via {@link #addArgument(Argument)} and
-	 * {@link #addArgument(ArgumentWithValue, ArgumentWithValueMatchedCallback)}. In case a non-optional argument is not matched,
-	 * an {@link ArgumentException} is thrown with the message describing which non-optional arguments have not been found. In case
-	 * the value of an argument could not be cased, an {@link ArgumentException} is thrown describing why the value could not be
-	 * parsed. In case a value for an argument with expected value is not found, an {@link ArgumentException} is thrown, with its
-	 * message describing for which argument the value could not be found. */
+	 * instances added via {@link #addArgument(Argument)} and {@link #addArgument(ArgumentWithValue)}. In case a non-optional
+	 * argument is not matched, an {@link ArgumentException} is thrown with the message describing which non-optional arguments
+	 * have not been found. In case the value of an argument could not be parsed, an {@link ArgumentException} is thrown describing
+	 * why the value could not be parsed. In case a value for an argument with expected value is not found, an
+	 * {@link ArgumentException} is thrown, with its message describing for which argument the value could not be found. */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public void parse (String[] args) {
+	public ParsedArguments parse (String[] args) {
 		Set<BaseArgument> nonOptional = new HashSet<>();
 		for (BaseArgument arg : arguments) {
 			if (!arg.isOptional()) nonOptional.add(arg);
 		}
 
+		List<ParsedArgument> parsedArguments = new ArrayList<>();
 		int index = 0;
 		while (index < args.length) {
 			String a = args[index++];
@@ -92,9 +127,9 @@ public class Arguments {
 
 					if (arg instanceof ArgumentWithValue) {
 						if (index >= args.length) throw new ArgumentException("Expected value for argument " + a + ", but no value was given.");
-						argumentWithValueCallbacks.get(arg).matched((ArgumentWithValue)arg, ((ArgumentWithValue)arg).parseValue(args[index++]));
+						parsedArguments.add(new ParsedArgument((ArgumentWithValue)arg, ((ArgumentWithValue)arg).parseValue(args[index++])));
 					} else {
-						argumentCallbacks.get(arg).matched((Argument)arg);
+						parsedArguments.add(new ParsedArgument((Argument)arg));
 					}
 					break;
 				}
@@ -115,6 +150,7 @@ public class Arguments {
 			}
 			throw new ArgumentException("Expected the following non-optional arguments: " + builder.toString() + ".");
 		}
+		return new ParsedArguments(parsedArguments);
 	}
 
 	/** Outputs the help text of each argument in the order they were added with {@link #addArgument(Argument)} and

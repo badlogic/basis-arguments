@@ -3,8 +3,6 @@ package io.marioslab.basis.arguments;
 
 import java.io.PrintStream;
 
-import io.marioslab.basis.arguments.Arguments.ArgumentWithValueMatchedCallback;
-
 /**
  * <p>
  * Defines an argument that expects a value, e.g. "-p path/to/somewhere", that can be parsed via {@link Arguments#parse(String[])}
@@ -12,8 +10,7 @@ import io.marioslab.basis.arguments.Arguments.ArgumentWithValueMatchedCallback;
  * </p>
  *
  * <p>
- * An argument has one or more forms, e.g. "-v" or "-verbose", that {@link Arguments#parse(String[])} matches against. When an
- * argument that expects a value is matched, its {@link ArgumentWithValueMatchedCallback} is called.
+ * An argument has one or more forms, e.g. "-v" or "-verbose", that {@link Arguments#parse(String[])} matches against.
  * </p>
  *
  * <p>
