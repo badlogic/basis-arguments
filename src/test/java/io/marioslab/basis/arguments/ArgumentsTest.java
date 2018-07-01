@@ -65,6 +65,16 @@ public class ArgumentsTest {
 		assertEquals((Integer)1234, parsed.getValue(b));
 		assertEquals((Float)123.4f, parsed.getValue(c));
 		assertEquals("This is a test", parsed.getValue(d));
+
+		assertEquals(true, parsed.getValue("-a"));
+		assertEquals((Integer)1234, parsed.getValue(b));
+		assertEquals((Float)123.4f, parsed.getValue(c));
+		assertEquals("This is a test", parsed.getValue(d));
+
+		assertEquals(true, parsed.getValue("-a"));
+		assertEquals((Integer)1234, parsed.getValue("--bbb"));
+		assertEquals((Float)123.4f, parsed.getValue("-c"));
+		assertEquals("This is a test", parsed.getValue("--ddd"));
 	}
 
 	@Test

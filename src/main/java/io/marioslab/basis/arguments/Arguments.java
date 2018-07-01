@@ -26,14 +26,34 @@ public class Arguments {
 			this.value = null;
 		}
 
+		/** Returns whether the argument is of the given form. **/
+		public boolean is (String form) {
+			for (String argForm : argument.getForms()) {
+				if (argForm.equals(form)) return true;
+			}
+			return false;
+		}
+
+		/** Returns whether the argument is equal in identity (==) to the parsed argument. **/
 		public boolean is (BaseArgument argument) {
 			return argument == this.argument;
 		}
 
+		/** Returns the parsed value for the argument, or throws an ArgumentException if the parsed argument and given argument are
+		 * not the same. **/
 		@SuppressWarnings("unchecked")
 		public <T> T getValue (ArgumentWithValue<T> argument) {
 			if (argument != this.argument) throw new ArgumentException(
-				"The provided argument " + argument.getForms()[0] + " does not match the parsed argument " + argument.getForms()[0] + ".");
+				"The provided argument " + argument.getForms()[0] + " does not match the parsed argument " + this.argument.getForms()[0] + ".");
+			return (T)value;
+		}
+
+		/** Returns the parsed value for the argument, or throws an ArgumentException if the parsed argument does not have the given
+		 * form. **/
+		@SuppressWarnings("unchecked")
+		public <T> T getValue (String form) {
+			if (!is(form)) throw new ArgumentException(
+				"The provided argument " + argument.getForms()[0] + " does not match the parsed argument " + this.argument.getForms()[0] + ".");
 			return (T)value;
 		}
 	}
@@ -46,19 +66,41 @@ public class Arguments {
 			this.parsedArguments = parsedArguments;
 		}
 
+		/** Returns the parsed arguments in the order they occured in the input. **/
 		public List<ParsedArgument> getParsedArguments () {
 			return parsedArguments;
 		}
 
+		/** Returns the value for the given argument, or throws an {@link ArgumentException} if the value is not found. **/
 		public <T> T getValue (ArgumentWithValue<T> argument) {
 			for (ParsedArgument parsedArg : parsedArguments) {
 				if (parsedArg.is(argument)) {
 					return parsedArg.getValue(argument);
 				}
 			}
-			throw new ArgumentException("The argument " + argument.getForms()[0]);
+			throw new ArgumentException("The argument " + argument.getForms()[0] + " was not found or does not have a value.");
 		}
 
+		/** Returns the value for the argument with the given form, or throws an {@link ArgumentException} if the value is not
+		 * found. **/
+		public <T> T getValue (String form) {
+			for (ParsedArgument parsedArg : parsedArguments) {
+				if (parsedArg.is(form)) {
+					return parsedArg.getValue(form);
+				}
+			}
+			throw new ArgumentException("The argument " + form + " was not found or does not have a value.");
+		}
+
+		/** Returns whether the argument with the given form was parsed. **/
+		public boolean has (String form) {
+			for (ParsedArgument parsedArg : parsedArguments) {
+				if (parsedArg.is(form)) return true;
+			}
+			return false;
+		}
+
+		/** Returns whether the given argument was parsed. **/
 		public boolean has (BaseArgument argument) {
 			for (ParsedArgument parsedArg : parsedArguments) {
 				if (parsedArg.is(argument)) return true;
