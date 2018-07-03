@@ -31,6 +31,23 @@ mvn clean install
 
 The resulting `.jar` file will be located in the `target/` folder.
 
+You can also find `SNAPSHOT` builds of the latest and greatest changes to the master branch in the SonaType snapshots repository. To add that snapshot repository to your Maven `pom.xml` use the following snippet:
+
+```
+<repositories>
+    <repository>
+        <id>oss-sonatype</id>
+        <name>oss-sonatype</name>
+        <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+Google will tell you how to do the same for your Gradle builds.
+
 ## Basic Usage
 
 ```java
@@ -50,14 +67,14 @@ public static void main (String[] argv) {
 
    try {
       ParsedArguments parsed = args.parse(argv);
-      
+
       // If the user requested to be shown the help text, use the Arguments#printHelp function to output
       // it nicely formated.
-      if (parsed.has(help)) {      
+      if (parsed.has(help)) {
       	args.printHelp(System.out);
       	System.exit(0);
       }
-      
+
       // Otherwise check if non-value arguments are given, and get the non-optional port value.
       boolean isLogVerbosely = parsed.has(verbose);
       boolean isServeStaticFiles = parsed.has(serve);
@@ -77,11 +94,11 @@ After constructing an argument, we can add it to the `Arguments` instance.
 When all arguments have been added, we can perform two actions.
 
 ## Argument Parsing
-To parse an array of strings use the `Arguments#parse()` method. The method ensures that all non-optional have been specified and parses argument values into their Java type representation. 
+To parse an array of strings use the `Arguments#parse()` method. The method ensures that all non-optional have been specified and parses argument values into their Java type representation.
 
-The parsed arguments are returned in form of a `ParsedArguments` instance. 
+The parsed arguments are returned in form of a `ParsedArguments` instance.
 
-To check if an argument without value was given, pass the argument to the `ParsedArguments#has()` method, which returns true if the argument was part of the command line arguments. To get the value of an argument with an expected value, pass the argument to the `ParsedArguments#getValue()` method. It returns the parsed value as a Java type instance, e.g. Integer, Float, etc. 
+To check if an argument without value was given, pass the argument to the `ParsedArguments#has()` method, which returns true if the argument was part of the command line arguments. To get the value of an argument with an expected value, pass the argument to the `ParsedArguments#getValue()` method. It returns the parsed value as a Java type instance, e.g. Integer, Float, etc.
 
 If you depend on the order of arguments passed to your application, or if an argument can occur multiple times, you can iterate through the `ParsedArgument` instances via `ParsedArguments#getParsedArguments()
 
