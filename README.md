@@ -15,13 +15,13 @@ As a dependency of your Maven project:
 <dependency>
    <groupId>io.marioslab.basis</groupId>
    <artifactId>arguments</artifactId>
-   <version>1.2</version>
+   <version>1.3</version>
 </dependency>
 ```
 
 As a dependency of your Gradle project:
 ```
-compile 'io.marioslab.basis:arguments:1.2'
+compile 'io.marioslab.basis:arguments:1.3'
 ```
 
 You can also build the `.jar` file yourself, assuming you have Maven and JDK 1.8+ installed:
@@ -31,7 +31,9 @@ mvn clean install
 
 The resulting `.jar` file will be located in the `target/` folder.
 
-You can also find `SNAPSHOT` builds of the latest and greatest changes to the master branch in the SonaType snapshots repository. To add that snapshot repository to your Maven `pom.xml` use the following snippet:
+You can also find `SNAPSHOT` builds of the latest and greatest changes to the master branch in the SonaType snapshots repository. The snapshot is build by [Jenkins](https://libgdx.badlogicgames.com/jenkins/job/basis-arguments/)
+
+To add that snapshot repository to your Maven `pom.xml` use the following snippet:
 
 ```
 <repositories>
